@@ -1,7 +1,7 @@
 {
   "name": "pipespawn",
-  "version": "1.1.0",
-  "description": "A utility to pipe a Readable through an external process via its stdin and collect the resultimg stdout.",
+  "version": "1.1.1",
+  "description": "A utility to pipe a Readable through an external process and return the result as a new Readable.",
   "main": "dist/pipespawn.js",
   "types": "dist/pipespawn.d.ts",
   "type": "module",
