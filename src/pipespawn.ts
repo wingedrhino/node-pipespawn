@@ -5,6 +5,7 @@ import { Readable } from 'node:stream'
 import { access, unlink, readFile } from 'node:fs/promises'
 import { createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
+import { RhinoError } from 'rhinoerror'
 
 /**
  * SpawnOptions encapsulates the options for a pipespawn call.
@@ -85,7 +86,7 @@ async function pipespawnImpl (input: Readable, command: string, spawnOptions?: S
 
   // ensure that a command WAS provided
   if (typeof cmd !== 'string') {
-    throw new Error('pipespawn: command must be a string')
+    throw new RhinoError('PipespawnError', 'pipespawn: command must be a string', null, { cmd, args }, null)
   }
 
   const options = new SpawnOptionsImpl(spawnOptions)
@@ -100,7 +101,7 @@ async function pipespawnImpl (input: Readable, command: string, spawnOptions?: S
 
   // check if we have access to working directory
   if (!await canAccessLocation(workingDirectory)) {
-    throw new Error(`pipespawn: working directory cannot be accessed: ${workingDirectory}`)
+    throw new RhinoError('PipespawnError', 'working directory cannot be accessed', null, { workingDirectory }, null)
   }
 
   // write input to inFile if provided
@@ -109,7 +110,7 @@ async function pipespawnImpl (input: Readable, command: string, spawnOptions?: S
     try {
       await pipeline(input, writeStream)
     } catch (err: any) {
-      throw new Error(`pipespawn: failed to write input to file: ${workingDirectory}/${options.inFile}`)
+      throw new RhinoError('PipespawnError', 'error writing input to file', err, { options, workingDirectory }, null)
     }
   }
 
@@ -137,7 +138,7 @@ async function pipespawnImpl (input: Readable, command: string, spawnOptions?: S
           resolve(res)
         } else {
           const res = Buffer.concat(stderr).toString('utf-8')
-          reject(new Error(res))
+          reject(new RhinoError('PipespawnError', 'child process ended with a non-zero exit code', null, { stderr: res, code }, null))
         }
       })
     })
@@ -147,8 +148,8 @@ async function pipespawnImpl (input: Readable, command: string, spawnOptions?: S
       const outBuffer = await readFile(`${workingDirectory}/${options.outFile}`)
       return outBuffer
     }
-  } catch (err) {
-    throw new Error(`pipespawn: failed to execute command: ${command}`)
+  } catch (err: any) {
+    throw new RhinoError('PipespawnError', `pipespawn: failed to execute command: ${command}`, err, { options, workingDirectory, command }, null)
   } finally {
     if (options.inFile.length > 0) {
       await unlink(`${workingDirectory}/${options.inFile}`)

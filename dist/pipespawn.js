@@ -5,6 +5,7 @@ import { Readable } from 'node:stream';
 import { access, unlink, readFile } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
+import { RhinoError } from 'rhinoerror';
 /**
  * SpawnOptionsNonNullable is a version of SpawnOptions that does not contain
  * undefined values and instead is designed to hold default values.
@@ -72,7 +73,7 @@ async function pipespawnImpl(input, command, spawnOptions) {
     const [cmd, ...args] = command.split(' ');
     // ensure that a command WAS provided
     if (typeof cmd !== 'string') {
-        throw new Error('pipespawn: command must be a string');
+        throw new RhinoError('PipespawnError', 'pipespawn: command must be a string', null, { cmd, args }, null);
     }
     const options = new SpawnOptionsImpl(spawnOptions);
     // Set a working directory for the child process
@@ -85,7 +86,7 @@ async function pipespawnImpl(input, command, spawnOptions) {
     }
     // check if we have access to working directory
     if (!await canAccessLocation(workingDirectory)) {
-        throw new Error(`pipespawn: working directory cannot be accessed: ${workingDirectory}`);
+        throw new RhinoError('PipespawnError', 'working directory cannot be accessed', null, { workingDirectory }, null);
     }
     // write input to inFile if provided
     if (options.inFile.length > 0) {
@@ -94,7 +95,7 @@ async function pipespawnImpl(input, command, spawnOptions) {
             await pipeline(input, writeStream);
         }
         catch (err) {
-            throw new Error(`pipespawn: failed to write input to file: ${workingDirectory}/${options.inFile}`);
+            throw new RhinoError('PipespawnError', 'error writing input to file', err, { options, workingDirectory }, null);
         }
     }
     const proc = spawn(cmd, args, { cwd: workingDirectory });
@@ -122,7 +123,7 @@ async function pipespawnImpl(input, command, spawnOptions) {
                 }
                 else {
                     const res = Buffer.concat(stderr).toString('utf-8');
-                    reject(new Error(res));
+                    reject(new RhinoError('PipespawnError', 'child process ended with a non-zero exit code', null, { stderr: res, code }, null));
                 }
             });
         });
@@ -135,7 +136,7 @@ async function pipespawnImpl(input, command, spawnOptions) {
         }
     }
     catch (err) {
-        throw new Error(`pipespawn: failed to execute command: ${command}`);
+        throw new RhinoError('PipespawnError', `pipespawn: failed to execute command: ${command}`, err, { options, workingDirectory, command }, null);
     }
     finally {
         if (options.inFile.length > 0) {
