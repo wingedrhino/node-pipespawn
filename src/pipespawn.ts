@@ -80,7 +80,7 @@ export async function canAccessLocation (pathToLocation: string): Promise<boolea
  * behaviour a little, like setting a custom working directory, or using input
  * and output files instead of reading/writing from/to stdin/stdout.
  */
-async function pipespawnImpl (input: Readable, command: string, spawnOptions?: SpawnOptions): Promise<Buffer> {
+async function pipespawnImpl (input: Readable | Buffer, command: string, spawnOptions?: SpawnOptions): Promise<Buffer> {
   // Start: split command from its arguments
   const [cmd, ...args] = command.split(' ')
 
@@ -108,7 +108,8 @@ async function pipespawnImpl (input: Readable, command: string, spawnOptions?: S
   if (options.inFile.length > 0) {
     const writeStream = createWriteStream(`${workingDirectory}/${options.inFile}`)
     try {
-      await pipeline(input, writeStream)
+      const readableForWriting = Buffer.isBuffer(input) ? Readable.from(input) : input
+      await pipeline(readableForWriting, writeStream)
     } catch (err: any) {
       throw new RhinoError('PipespawnError', 'error writing input to file', err, { options, workingDirectory }, null)
     }
@@ -117,7 +118,11 @@ async function pipespawnImpl (input: Readable, command: string, spawnOptions?: S
   const proc = spawn(cmd, args, { cwd: workingDirectory })
   if (options.inFile.length === 0) {
     // if no inFile was specified, write input to the process' stdin
-    input.pipe(proc.stdin)
+    if (Buffer.isBuffer(input)) {
+      proc.stdin.write(input)
+    } else {
+      input.pipe(proc.stdin)
+    }
   }
   try {
     const stdout = await new Promise<Buffer>((resolve, reject) => {
@@ -164,7 +169,7 @@ async function pipespawnImpl (input: Readable, command: string, spawnOptions?: S
 // and returns the stdout as a Buffer.
 // The behaviour can change slightly depending on the flags that are set within
 // the provided (and optional) SpawnOptions object.
-export async function pipespawnToBuffer (input: Readable, command: string, options?: SpawnOptions): Promise<Buffer> {
+export async function pipespawnToBuffer (input: Readable | Buffer, command: string, options?: SpawnOptions): Promise<Buffer> {
   const output = await pipespawnImpl(input, command, options)
   return output
 }
@@ -173,7 +178,7 @@ export async function pipespawnToBuffer (input: Readable, command: string, optio
 // and returns the stdout as a string.
 // The behaviour can change slightly depending on the flags that are set within
 // the provided (and optional) SpawnOptions object.
-export async function pipespawnToStream (input: Readable, command: string, options?: SpawnOptions): Promise<Readable> {
+export async function pipespawnToStream (input: Readable | Buffer, command: string, options?: SpawnOptions): Promise<Readable> {
   const output = await pipespawnImpl(input, command, options)
   return Readable.from(output)
 }

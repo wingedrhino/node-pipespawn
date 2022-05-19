@@ -92,7 +92,8 @@ async function pipespawnImpl(input, command, spawnOptions) {
     if (options.inFile.length > 0) {
         const writeStream = createWriteStream(`${workingDirectory}/${options.inFile}`);
         try {
-            await pipeline(input, writeStream);
+            const readableForWriting = Buffer.isBuffer(input) ? Readable.from(input) : input;
+            await pipeline(readableForWriting, writeStream);
         }
         catch (err) {
             throw new RhinoError('PipespawnError', 'error writing input to file', err, { options, workingDirectory }, null);
@@ -101,7 +102,12 @@ async function pipespawnImpl(input, command, spawnOptions) {
     const proc = spawn(cmd, args, { cwd: workingDirectory });
     if (options.inFile.length === 0) {
         // if no inFile was specified, write input to the process' stdin
-        input.pipe(proc.stdin);
+        if (Buffer.isBuffer(input)) {
+            proc.stdin.write(input);
+        }
+        else {
+            input.pipe(proc.stdin);
+        }
     }
     try {
         const stdout = await new Promise((resolve, reject) => {

@@ -15,8 +15,8 @@ export interface SpawnOptions {
  * @returns boolean
  */
 export declare function canAccessLocation(pathToLocation: string): Promise<boolean>;
-export declare function pipespawnToBuffer(input: Readable, command: string, options?: SpawnOptions): Promise<Buffer>;
-export declare function pipespawnToStream(input: Readable, command: string, options?: SpawnOptions): Promise<Readable>;
+export declare function pipespawnToBuffer(input: Readable | Buffer, command: string, options?: SpawnOptions): Promise<Buffer>;
+export declare function pipespawnToStream(input: Readable | Buffer, command: string, options?: SpawnOptions): Promise<Readable>;
 export declare const pipespawn: {
     toBuffer: typeof pipespawnToBuffer;
     toStream: typeof pipespawnToStream;

@@ -36,7 +36,8 @@ async function exampleTest() {
     // create a input.txt, write the word "hi" to it, copy it to output.txt, read
     // the contents of output.txt back, and delete both files. Do this in the OS's
     // default tmp directory
-    const outputBuf2 = await pipespawn.toBuffer(Readable.from('hi'), 'cp input.txt output.txt', {
+    const input2Buf = Buffer.from('hi');
+    const outputBuf2 = await pipespawn.toBuffer(input2Buf, 'cp input.txt output.txt', {
         inFile: 'input.txt',
         outFile: 'output.txt',
         useTmpDir: true

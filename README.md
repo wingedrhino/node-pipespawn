@@ -1,10 +1,10 @@
 # pipespawn
 
-`pipespawn` is a package that lets you pipe data from a Readable stream into an
-external process and read back the processed data from the external process as
-a new Readable stream.
+`pipespawn` is a package that lets you pipe data from an input Readable /
+Buffer into an external process and read back the processed data from the
+external process as a Readable / Buffer.
 
-It can operate in two ways: by default, it pipes the data from the Readable to
+It can operate in two ways: by default, it pipes the data from the input to
 the external process' stdin, and then reads the external process' stdout.
 
 But if you provide an optional `SpawnOptions` object to the calls, you can
