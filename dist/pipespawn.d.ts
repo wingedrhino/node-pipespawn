@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="node" />
 import { Readable } from 'node:stream';
 /**
  * SpawnOptions encapsulates the options for a pipespawn call.

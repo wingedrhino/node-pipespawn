@@ -146,10 +146,20 @@ async function pipespawnImpl(input, command, spawnOptions) {
     }
     finally {
         if (options.inFile.length > 0) {
-            await unlink(`${workingDirectory}/${options.inFile}`);
+            await unlinkIgnoreNotFound(`${workingDirectory}/${options.inFile}`);
         }
         if (options.outFile.length > 0) {
-            await unlink(`${workingDirectory}/${options.outFile}`);
+            await unlinkIgnoreNotFound(`${workingDirectory}/${options.outFile}`);
+        }
+    }
+}
+async function unlinkIgnoreNotFound(path) {
+    try {
+        await unlink(path);
+    }
+    catch (err) {
+        if (err.code !== 'ENOENT') {
+            throw err;
         }
     }
 }

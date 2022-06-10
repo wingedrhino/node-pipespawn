@@ -157,10 +157,20 @@ async function pipespawnImpl (input: Readable | Buffer, command: string, spawnOp
     throw new RhinoError('PipespawnError', `pipespawn: failed to execute command: ${command}`, err, { options, workingDirectory, command }, null)
   } finally {
     if (options.inFile.length > 0) {
-      await unlink(`${workingDirectory}/${options.inFile}`)
+      await unlinkIgnoreNotFound(`${workingDirectory}/${options.inFile}`)
     }
     if (options.outFile.length > 0) {
-      await unlink(`${workingDirectory}/${options.outFile}`)
+      await unlinkIgnoreNotFound(`${workingDirectory}/${options.outFile}`)
+    }
+  }
+}
+
+async function unlinkIgnoreNotFound (path: string): Promise<void> {
+  try {
+    await unlink(path)
+  } catch (err: any) {
+    if (err.code !== 'ENOENT') {
+      throw err
     }
   }
 }
