@@ -5,17 +5,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node",
+      "name": "Run Current File",
       "request": "launch",
-      "name": "Launch Tests",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "program": "${workspaceFolder}/src/pipespawn.test.ts",
-      "preLaunchTask": "npm: build",
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+      "type": "node",
+      "outputCapture": "std",
+      "args": ["--loader", "tsm", "${file}"]
     }
   ]
 }

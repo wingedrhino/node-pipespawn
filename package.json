@@ -1,21 +1,25 @@
 {
   "name": "pipespawn",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "A utility to pipe a Buffer / Readable through an external process and return the result as a Buffer / Readable.",
-  "main": "dist/pipespawn.js",
-  "types": "dist/pipespawn.d.ts",
+  "main": "dist/src/pipespawn.js",
+  "types": "dist/src/pipespawn.d.ts",
   "type": "module",
   "engines": {
-    "node": ">=18.1.0",
-    "npm": ">=8.8.0"
+    "node": ">=19.0.0",
+    "npm": ">=8.19.2"
   },
   "scripts": {
     "build:clean": "rimraf dist",
     "build:compile": "tsc",
     "build": "npm-run-all build:clean build:compile",
-    "lint:fix": "ts-standard --fix src/**/*.ts",
-    "lint": "ts-standard src/**/*.ts",
-    "test:run": "ts-node-esm src/pipespawn.test.ts",
+    "lint:fix:src": "ts-standard --fix src/**/*.ts",
+    "lint:fix:test": "ts-standard --fix src/**/*.ts",
+    "lint:fix": "npm-run-all lint:fix:src lint:fix:test",
+    "lint:src": "ts-standard src/**/*.ts",
+    "lint:test": "ts-standard src/**/*.ts",
+    "lint": "npm-run-all lint:src lint:test",
+    "test:run": "uvu -r tsm test --bail src/",
     "test": "npm-run-all lint test:run"
   },
   "repository": {
@@ -35,14 +39,17 @@
   },
   "homepage": "https://github.com/wingedrhino/node-pipespawn#readme",
   "devDependencies": {
-    "@types/node": "^17.0.41",
+    "@types/node": "^18.11.5",
+    "earljs": "^0.2.3",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
-    "ts-node": "^10.8.1",
-    "ts-standard": "^11.0.0",
-    "typescript": "^4.7.3"
+    "ts-standard": "^12.0.1",
+    "tsm": "^2.2.2",
+    "typescript": "^4.8.4",
+    "uvu": "^0.5.6"
   },
   "dependencies": {
-    "rhinoerror": "^0.2.1"
+    "rhinoerror": "^0.2.2",
+    "rhinologger": "^0.2.2"
   }
 }
