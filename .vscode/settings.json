@@ -1,4 +1,8 @@
 {
     "editor.tabSize": 2,
-    "standard.engine": "ts-standard"
+    "standard.engine": "ts-standard",
+    "javascript.preferences.importModuleSpecifier": "relative",
+    "javascript.preferences.importModuleSpecifierEnding": "js",
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.importModuleSpecifierEnding": "js"
 }

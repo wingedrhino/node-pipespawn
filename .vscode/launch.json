@@ -9,7 +9,8 @@
       "request": "launch",
       "type": "node",
       "outputCapture": "std",
-      "args": ["--loader", "tsm", "${file}"]
+      "args": ["--loader", "tsm"],
+      "program": "${file}"
     }
   ]
 }
