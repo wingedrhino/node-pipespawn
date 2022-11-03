@@ -1,6 +1,5 @@
 /// <reference types="node" />
 /// <reference types="node" />
-import { Readable } from 'node:stream';
 /**
  * SpawnOptions encapsulates the options for a pipespawn call.
  */
@@ -16,8 +15,8 @@ export interface SpawnOptions {
  * @returns boolean
  */
 export declare function canAccessLocation(pathToLocation: string): Promise<boolean>;
-export declare function pipespawnToBuffer(input: Readable | Buffer, command: string, options?: SpawnOptions): Promise<Buffer>;
-export declare function pipespawnToStream(input: Readable | Buffer, command: string, options?: SpawnOptions): Promise<Readable>;
+export declare function pipespawnToBuffer(input: NodeJS.ReadableStream | Buffer, command: string, options?: SpawnOptions): Promise<Buffer>;
+export declare function pipespawnToStream(input: NodeJS.ReadableStream | Buffer, command: string, options?: SpawnOptions): Promise<NodeJS.ReadableStream>;
 export declare const pipespawn: {
     toBuffer: typeof pipespawnToBuffer;
     toStream: typeof pipespawnToStream;

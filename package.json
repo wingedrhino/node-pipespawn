@@ -1,7 +1,7 @@
 {
   "name": "pipespawn",
-  "version": "1.6.0",
-  "description": "A utility to pipe a Buffer / Readable through an external process and return the result as a Buffer / Readable.",
+  "version": "1.7.0",
+  "description": "A utility to pipe a Buffer / NodeJS.ReadableStream through an external process and return the result as a Buffer / NodeJS.ReadableStream.",
   "main": "dist/src/pipespawn.js",
   "types": "dist/src/pipespawn.d.ts",
   "type": "module",

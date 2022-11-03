@@ -1,8 +1,8 @@
 # pipespawn
 
-`pipespawn` is a package that lets you pipe data from an input Readable /
-Buffer into an external process and read back the processed data from the
-external process as a Readable / Buffer.
+`pipespawn` is a package that lets you pipe data from an input `Buffer` /
+`NodeJS.ReadableStream` into an external process and read back the processed
+data from the external process as a `Buffer` / `NodeJS.ReadableStream`.
 
 It can operate in two ways: by default, it pipes the data from the input to
 the external process' stdin, and then reads the external process' stdout.
